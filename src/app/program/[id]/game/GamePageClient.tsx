@@ -2,6 +2,7 @@
 
 import { use, useState, useEffect, useRef } from "react";
 
+export const dynamicParams = true;
 import { useSearchParams, useRouter } from "next/navigation";
 import styled, { keyframes, css } from "styled-components";
 import Header from "@/components/Header";
@@ -371,7 +372,7 @@ const RouletteWheel = ({
   );
 };
 
-export default function GamePageClient({
+export default function GamePage({
   params,
 }: {
   params: Promise<{ id: string }>;

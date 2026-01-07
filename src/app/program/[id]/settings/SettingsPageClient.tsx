@@ -2,6 +2,7 @@
 
 import { use, useState } from "react";
 
+export const dynamicParams = true;
 import styled from "styled-components";
 import Header from "@/components/Header";
 import NavHeader from "@/components/NavHeader";
@@ -237,7 +238,7 @@ const StartButton = styled(motion.button)`
   }
 `;
 
-export default function SettingsPageClient({
+export default function GameSettings({
   params,
 }: {
   params: Promise<{ id: string }>;

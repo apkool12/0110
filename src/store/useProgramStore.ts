@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface Participant {
   id: string;
@@ -8,8 +8,8 @@ export interface Participant {
 }
 
 const THUMBNAIL_IMAGES = [
-  'https://i.pinimg.com/736x/e0/4d/57/e04d5753cf4baa18baa04f38ff2842ce.jpg',
-  'https://i.pinimg.com/236x/18/e8/73/18e873f982ada7f275ecac2003421121.jpg',
+  "https://i.pinimg.com/736x/e0/4d/57/e04d5753cf4baa18baa04f38ff2842ce.jpg",
+  "https://i.pinimg.com/236x/18/e8/73/18e873f982ada7f275ecac2003421121.jpg",
 ];
 
 export interface Program {
@@ -18,13 +18,13 @@ export interface Program {
   thumbnailUrl: string;
   participants: Participant[];
   exclusions: string[];
-  ladderResults: string[]; 
+  ladderResults: string[];
   drawSettings: {
     drawCount: number; // 뽑을 개수
     allowDuplicate: boolean; // 중복 허용
   };
   rouletteSettings: {
-    spinSpeed: 'fast' | 'normal' | 'slow'; // 회전 속도
+    spinSpeed: "fast" | "normal" | "slow"; // 회전 속도
     spinDuration: number; // 회전 시간 (초)
   };
   config: {
@@ -46,16 +46,29 @@ interface ProgramState {
   addProgram: (name: string) => void;
   deleteProgram: (id: string) => void;
   updateProgramName: (programId: string, name: string) => void;
-  updateProgramConfig: (programId: string, config: Partial<Program['config']>) => void;
+  updateProgramConfig: (
+    programId: string,
+    config: Partial<Program["config"]>
+  ) => void;
   updateLadderResults: (programId: string, results: string[]) => void;
-  updateDrawSettings: (programId: string, settings: Partial<Program['drawSettings']>) => void;
-  updateRouletteSettings: (programId: string, settings: Partial<Program['rouletteSettings']>) => void;
+  updateDrawSettings: (
+    programId: string,
+    settings: Partial<Program["drawSettings"]>
+  ) => void;
+  updateRouletteSettings: (
+    programId: string,
+    settings: Partial<Program["rouletteSettings"]>
+  ) => void;
   addHistory: (programId: string, name: string) => void;
   clearHistory: (programId: string) => void;
   setActiveProgram: (id: string | null) => void;
   addParticipant: (programId: string, name: string) => void;
   removeParticipant: (programId: string, participantId: string) => void;
-  updateParticipantWeight: (programId: string, participantId: string, weight: number) => void;
+  updateParticipantWeight: (
+    programId: string,
+    participantId: string,
+    weight: number
+  ) => void;
   addExclusion: (programId: string, name: string) => void;
   removeExclusion: (programId: string, name: string) => void;
   resetProgram: (programId: string) => void;
@@ -77,13 +90,16 @@ export const useProgramStore = create<ProgramState>()(
       addProgram: (name) =>
         set((state) => {
           // 랜덤으로 썸네일 선택
-          const randomThumbnail = THUMBNAIL_IMAGES[Math.floor(Math.random() * THUMBNAIL_IMAGES.length)];
+          const randomThumbnail =
+            THUMBNAIL_IMAGES[
+              Math.floor(Math.random() * THUMBNAIL_IMAGES.length)
+            ];
           return {
             programs: [
               ...state.programs,
               {
                 id: Date.now().toString(),
-                name: name || '새로운 프로그램',
+                name: name || "새로운 프로그램",
                 thumbnailUrl: randomThumbnail,
                 participants: [],
                 exclusions: [],
@@ -93,7 +109,7 @@ export const useProgramStore = create<ProgramState>()(
                   allowDuplicate: false,
                 },
                 rouletteSettings: {
-                  spinSpeed: 'normal',
+                  spinSpeed: "normal",
                   spinDuration: 4,
                 },
                 config: { ...DEFAULT_CONFIG },
@@ -107,16 +123,19 @@ export const useProgramStore = create<ProgramState>()(
       deleteProgram: (id) =>
         set((state) => ({
           programs: state.programs.filter((p) => p.id !== id),
-          activeProgramId: state.activeProgramId === id ? null : state.activeProgramId,
+          activeProgramId:
+            state.activeProgramId === id ? null : state.activeProgramId,
         })),
 
       updateProgramName: (programId, name) =>
         set((state) => ({
           programs: state.programs.map((p) => {
             // 기존 프로그램에 thumbnailUrl이 없으면 랜덤으로 할당
-            const thumbnailUrl = p.thumbnailUrl || THUMBNAIL_IMAGES[parseInt(p.id) % THUMBNAIL_IMAGES.length];
-            return p.id === programId 
-              ? { ...p, name: name.trim() || '새로운 프로그램', thumbnailUrl } 
+            const thumbnailUrl =
+              p.thumbnailUrl ||
+              THUMBNAIL_IMAGES[parseInt(p.id) % THUMBNAIL_IMAGES.length];
+            return p.id === programId
+              ? { ...p, name: name.trim() || "새로운 프로그램", thumbnailUrl }
               : { ...p, thumbnailUrl };
           }),
         })),
@@ -151,8 +170,9 @@ export const useProgramStore = create<ProgramState>()(
               ? {
                   ...p,
                   drawSettings: {
-                    drawCount: p.drawSettings?.drawCount ?? 1,
-                    allowDuplicate: p.drawSettings?.allowDuplicate ?? false,
+                    drawCount: 1,
+                    allowDuplicate: false,
+                    ...(p.drawSettings || {}),
                     ...settings,
                   },
                 }
@@ -167,7 +187,9 @@ export const useProgramStore = create<ProgramState>()(
               ? {
                   ...p,
                   rouletteSettings: {
-                    ...(p.rouletteSettings || { spinSpeed: 'normal', spinDuration: 4 }),
+                    spinSpeed: "normal",
+                    spinDuration: 4,
+                    ...(p.rouletteSettings || {}),
                     ...settings,
                   },
                 }
@@ -181,7 +203,10 @@ export const useProgramStore = create<ProgramState>()(
             p.id === programId
               ? {
                   ...p,
-                  history: [{ name, drawnAt: Date.now() }, ...(p.history || [])].slice(0, 50),
+                  history: [
+                    { name, drawnAt: Date.now() },
+                    ...(p.history || []),
+                  ].slice(0, 50),
                 }
               : p
           ),
@@ -217,7 +242,9 @@ export const useProgramStore = create<ProgramState>()(
             p.id === programId
               ? {
                   ...p,
-                  participants: p.participants.filter((part) => part.id !== participantId),
+                  participants: p.participants.filter(
+                    (part) => part.id !== participantId
+                  ),
                 }
               : p
           ),
@@ -241,7 +268,7 @@ export const useProgramStore = create<ProgramState>()(
         set((state) => ({
           programs: state.programs.map((p) =>
             p.id === programId
-              ? { ...p, exclusions: Array.from(new Set([...p.exclusions, name])) }
+              ? { ...p, exclusions: [...new Set([...p.exclusions, name])] }
               : p
           ),
         })),
@@ -258,14 +285,12 @@ export const useProgramStore = create<ProgramState>()(
       resetProgram: (programId) =>
         set((state) => ({
           programs: state.programs.map((p) =>
-            p.id === programId
-              ? { ...p, participants: [], exclusions: [] }
-              : p
+            p.id === programId ? { ...p, participants: [], exclusions: [] } : p
           ),
         })),
     }),
     {
-      name: 'program-storage',
+      name: "program-storage",
     }
   )
 );
