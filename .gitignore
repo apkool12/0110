@@ -34,3 +34,7 @@ next-env.d.ts
 
 # cursor rules
 .cursorrules
+
+# build output
+/out
+/.next
