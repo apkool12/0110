@@ -1,8 +1,6 @@
 'use client';
 
 import { use, useState } from 'react';
-
-export const dynamicParams = true;
 import styled from 'styled-components';
 import Header from '@/components/Header';
 import NavHeader from '@/components/NavHeader';
@@ -118,7 +116,7 @@ const ResultTag = styled.div`
   border: 1px solid #eee;
 `;
 
-export default function ProgramConfig({ params }: { params: Promise<{ id: string }> }) {
+export default function ConfigPageClient({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const id = resolvedParams.id;
   const hasHydrated = useHasHydrated();

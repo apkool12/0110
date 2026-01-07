@@ -170,9 +170,8 @@ export const useProgramStore = create<ProgramState>()(
               ? {
                   ...p,
                   drawSettings: {
-                    drawCount: 1,
-                    allowDuplicate: false,
-                    ...(p.drawSettings || {}),
+                    drawCount: p.drawSettings?.drawCount ?? 1,
+                    allowDuplicate: p.drawSettings?.allowDuplicate ?? false,
                     ...settings,
                   },
                 }
@@ -187,9 +186,8 @@ export const useProgramStore = create<ProgramState>()(
               ? {
                   ...p,
                   rouletteSettings: {
-                    spinSpeed: "normal",
-                    spinDuration: 4,
-                    ...(p.rouletteSettings || {}),
+                    spinSpeed: p.rouletteSettings?.spinSpeed ?? 'normal',
+                    spinDuration: p.rouletteSettings?.spinDuration ?? 4,
                     ...settings,
                   },
                 }
@@ -268,7 +266,7 @@ export const useProgramStore = create<ProgramState>()(
         set((state) => ({
           programs: state.programs.map((p) =>
             p.id === programId
-              ? { ...p, exclusions: [...new Set([...p.exclusions, name])] }
+              ? { ...p, exclusions: Array.from(new Set([...p.exclusions, name])) }
               : p
           ),
         })),

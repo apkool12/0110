@@ -1,8 +1,6 @@
 "use client";
 
 import { use, useState } from "react";
-
-export const dynamicParams = true;
 import styled from "styled-components";
 import Header from "@/components/Header";
 import NavHeader from "@/components/NavHeader";
@@ -238,7 +236,7 @@ const StartButton = styled(motion.button)`
   }
 `;
 
-export default function GameSettings({
+export default function SettingsPageClient({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -258,8 +256,14 @@ export default function GameSettings({
   const [newResult, setNewResult] = useState("");
 
   const program = programs.find((p) => p.id === id);
-  const drawSettings = program?.drawSettings || { drawCount: 1, allowDuplicate: false };
-  const rouletteSettings = program?.rouletteSettings || { spinSpeed: 'normal' as const, spinDuration: 4 };
+  const drawSettings = program?.drawSettings || {
+    drawCount: 1,
+    allowDuplicate: false,
+  };
+  const rouletteSettings = program?.rouletteSettings || {
+    spinSpeed: "normal" as const,
+    spinDuration: 4,
+  };
 
   const handleAddLadderResult = () => {
     if (!newResult.trim()) return;
@@ -270,7 +274,10 @@ export default function GameSettings({
 
   const handleRemoveLadderResult = (index: number) => {
     const current = program?.ladderResults || [];
-    updateLadderResults(id, current.filter((_, i) => i !== index));
+    updateLadderResults(
+      id,
+      current.filter((_, i) => i !== index)
+    );
   };
 
   const handleDrawCountChange = (value: number) => {
@@ -285,7 +292,8 @@ export default function GameSettings({
 
   const isLadderConfigured =
     gameType !== "ladder" ||
-    (program?.ladderResults && program.ladderResults.length >= (program?.participants.length || 0));
+    (program?.ladderResults &&
+      program.ladderResults.length >= (program?.participants.length || 0));
 
   if (!hasHydrated || !program) return null;
 
@@ -312,7 +320,8 @@ export default function GameSettings({
               <SettingItem>
                 <Label>뽑을 개수</Label>
                 <Description>
-                  한 번에 몇 명을 뽑을지 설정합니다. (최대 {program.participants.length}명)
+                  한 번에 몇 명을 뽑을지 설정합니다. (최대{" "}
+                  {program.participants.length}명)
                 </Description>
                 <InputGroup>
                   <NumberInput
@@ -352,9 +361,7 @@ export default function GameSettings({
               </SectionTitle>
               <SettingItem>
                 <Label>회전 속도</Label>
-                <Description>
-                  룰렛이 회전하는 속도를 설정합니다.
-                </Description>
+                <Description>룰렛이 회전하는 속도를 설정합니다.</Description>
                 <SpeedButtonGroup>
                   <SpeedButton
                     $active={rouletteSettings.spinSpeed === "slow"}
@@ -409,7 +416,9 @@ export default function GameSettings({
                     placeholder="목적지 이름 (예: 당첨, 꽝, 벌칙...)"
                     value={newResult}
                     onChange={(e) => setNewResult(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleAddLadderResult()}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && handleAddLadderResult()
+                    }
                   />
                   <AddBtn onClick={handleAddLadderResult}>
                     <Plus size={20} />
@@ -447,8 +456,9 @@ export default function GameSettings({
               <InfoBox>
                 <Info size={18} color="#0369a1" />
                 <InfoText>
-                  참가자 수({program.participants.length}명)만큼 목적지를 설정하는 것을 권장합니다.
-                  목적지 수가 부족하면 기본값("탈락")이 자동으로 추가됩니다.
+                  참가자 수({program.participants.length}명)만큼 목적지를
+                  설정하는 것을 권장합니다. 목적지 수가 부족하면
+                  기본값("탈락")이 자동으로 추가됩니다.
                 </InfoText>
               </InfoBox>
             </>

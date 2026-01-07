@@ -1,8 +1,6 @@
 "use client";
 
 import { use, useState } from "react";
-
-export const dynamicParams = true;
 import styled from "styled-components";
 import Header from "@/components/Header";
 import NavHeader from "@/components/NavHeader";
@@ -187,7 +185,7 @@ const SaveInfo = styled.p`
   border-radius: 20px;
 `;
 
-export default function InputParticipants({
+export default function InputPageClient({
   params,
 }: {
   params: Promise<{ id: string }>;
