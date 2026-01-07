@@ -1,21 +1,8 @@
-"use client";
+import ProgramDetailClient from "./ProgramDetailClient";
 
-import { use, useState, useEffect } from "react";
-import styled from "styled-components";
-import Header from "@/components/Header";
-import NavHeader from "@/components/NavHeader";
-import {
-  List,
-  Settings,
-  RotateCcw,
-  SearchX,
-  Edit2,
-  Check,
-  X as XIcon,
-} from "lucide-react";
-import { useProgramStore } from "@/store/useProgramStore";
-import { useRouter } from "next/navigation";
-import { useHasHydrated } from "@/lib/useHasHydrated";
+export function generateStaticParams() {
+  return [];
+}
 
 const Container = styled.div`
   min-height: 100vh;
