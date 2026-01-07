@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import GamePageClient from "./GamePageClient";
 
 export async function generateStaticParams() {
@@ -11,5 +12,9 @@ export default function GamePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  return <GamePageClient params={params} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <GamePageClient params={params} />
+    </Suspense>
+  );
 }

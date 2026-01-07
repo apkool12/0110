@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import SettingsPageClient from "./SettingsPageClient";
 
 export async function generateStaticParams() {
@@ -11,5 +12,9 @@ export default function SettingsPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  return <SettingsPageClient params={params} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SettingsPageClient params={params} />
+    </Suspense>
+  );
 }
