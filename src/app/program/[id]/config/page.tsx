@@ -1,4 +1,4 @@
-import ConfigPageClient from './ConfigPageClient';
+import ConfigPageClient from "./ConfigPageClient";
 
 export function generateStaticParams() {
   return [];

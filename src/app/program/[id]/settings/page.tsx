@@ -1,4 +1,4 @@
-import SettingsPageClient from './SettingsPageClient';
+import SettingsPageClient from "./SettingsPageClient";
 
 export function generateStaticParams() {
   return [];

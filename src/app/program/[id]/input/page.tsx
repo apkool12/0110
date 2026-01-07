@@ -1,4 +1,4 @@
-import InputPageClient from './InputPageClient';
+import InputPageClient from "./InputPageClient";
 
 export function generateStaticParams() {
   return [];

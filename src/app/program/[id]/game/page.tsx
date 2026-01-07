@@ -1,4 +1,4 @@
-import GamePageClient from './GamePageClient';
+import GamePageClient from "./GamePageClient";
 
 export function generateStaticParams() {
   return [];
