@@ -1,6 +1,6 @@
 import ProgramDetailClient from "./ProgramDetailClient";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
   return [];
 }
 

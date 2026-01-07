@@ -1,6 +1,6 @@
 import GamePageClient from "./GamePageClient";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
   return [];
 }
 

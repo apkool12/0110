@@ -1,6 +1,6 @@
 import SettingsPageClient from "./SettingsPageClient";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
   return [];
 }
 
