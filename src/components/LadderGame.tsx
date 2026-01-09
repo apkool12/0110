@@ -152,17 +152,18 @@ export default function LadderGame({ participants, customResults, onFinish, onAl
         const hasLeftDiagonalConflict = diagonalRungs.some(d => d.r === r && d.c === c - 1 && d.dir === 1);
 
         if (!hasLeft && !hasRight && !hasDiagonalConflict && !hasLeftDiagonalConflict) {
-          if (rand > 0.55) {
-            // 45% 확률로 수평선 (더 많이 생성)
+          if (rand > 0.40) {
+            // 60% 확률로 수평선 생성 (더 많이 생성하여 경로 분산)
             horizontalRungs.push({ r, c });
-          } else if (rand > 0.25) {
-            // 30% 확률로 대각선 (더 많이 생성)
+          } else if (rand > 0.10) {
+            // 30% 확률로 대각선 생성
             const dir: 1 | -1 = Math.random() > 0.5 ? 1 : -1;
             // 경계 체크
             if ((dir === 1 && c < count - 1) || (dir === -1 && c > 0)) {
               diagonalRungs.push({ r, c, dir });
             }
           }
+          // 10% 확률로 선을 그리지 않음 (공간 확보)
         }
       }
     }
@@ -180,23 +181,20 @@ export default function LadderGame({ participants, customResults, onFinish, onAl
         // 현재 층에서 분기점 확인
         const hRight = horizontalRungs.find(h => h.r === r && h.c === currentCol);
         const hLeft = horizontalRungs.find(h => h.r === r && h.c === currentCol - 1);
-        const dRight = diagonalRungs.find(d => d.r === r && d.c === currentCol && d.dir === 1);
-        const dLeft = diagonalRungs.find(d => d.r === r && d.c === currentCol - 1 && d.dir === -1);
+        // 대각선: c 컬럼에서 시작해서 dir 방향으로 이동
+        // dir === 1: c -> c+1 (오른쪽 아래), dir === -1: c -> c-1 (왼쪽 아래)
+        const dFromCurrent = diagonalRungs.find(d => d.r === r && d.c === currentCol);
 
-        if (dRight) {
-          // 대각선 이동
-          const dir = dRight.dir;
-          segments.push({ from: { x: currentCol, y: prevY }, to: { x: currentCol + dir, y: currY }, length: 1.414, type: 'd' });
-          currentCol += dir;
-        } else if (dLeft) {
-          // 대각선 좌측 이동
-          const dir = dLeft.dir;
+        if (dFromCurrent) {
+          // 현재 컬럼에서 시작하는 대각선
+          const dir = dFromCurrent.dir;
           segments.push({ from: { x: currentCol, y: prevY }, to: { x: currentCol + dir, y: currY }, length: 1.414, type: 'd' });
           currentCol += dir;
         } else {
-          // 일반 수직 이동 후 수평선 체크
+          // 대각선이 없으면 일반 수직 이동
           segments.push({ from: { x: currentCol, y: prevY }, to: { x: currentCol, y: currY }, length: 1, type: 'v' });
           
+          // 수평선 체크
           if (hRight) {
             segments.push({ from: { x: currentCol, y: currY }, to: { x: currentCol + 1, y: currY }, length: 1, type: 'h' });
             currentCol++;
@@ -209,6 +207,15 @@ export default function LadderGame({ participants, customResults, onFinish, onAl
       newPaths.push({ startCol: i, endCol: currentCol, segments, totalLength: segments.reduce((acc, s) => acc + s.length, 0) });
     }
 
+    // 디버깅: endCol 확인
+    console.log('=== Ladder Path Debug ===');
+    console.log('Paths endCol:', newPaths.map(p => p.endCol));
+    console.log('Unique endCols:', Array.from(new Set(newPaths.map(p => p.endCol))));
+    console.log('Horizontal rungs:', horizontalRungs.length);
+    console.log('Diagonal rungs:', diagonalRungs.length);
+    console.log('Sample horizontal rungs:', horizontalRungs.slice(0, 10));
+    console.log('Sample diagonal rungs:', diagonalRungs.slice(0, 10));
+
     setPaths(newPaths);
 
     let finalResults = [...customResults];
@@ -216,13 +223,55 @@ export default function LadderGame({ participants, customResults, onFinish, onAl
       const defaultRes = Array(count - finalResults.length).fill('탈락');
       finalResults = [...finalResults, ...defaultRes];
     }
+    
+    // 결과를 무작위로 섞기
     const shuffledResults = finalResults.slice(0, count).sort(() => Math.random() - 0.5);
-    setDisplayResults(shuffledResults);
+    
+    // 각 참가자별로 직접 결과 할당 (중복 없이)
+    // 참가자 수만큼 결과를 순환하면서 할당하여 모든 결과가 사용되도록 함
+    const participantResults: string[] = [];
+    let resultIndex = 0;
+    
+    for (let i = 0; i < count; i++) {
+      // 결과 배열을 순환하면서 할당
+      participantResults.push(shuffledResults[resultIndex % shuffledResults.length]);
+      resultIndex++;
+    }
+    
+    // 하단에 표시할 결과는 endCol 위치에 맞게 배치
+    const endCols = newPaths.map(p => p.endCol);
+    const displayResultsArray: string[] = new Array(count).fill('');
+    
+    // 각 참가자의 endCol 위치에 해당 참가자의 결과를 배치
+    newPaths.forEach((path, idx) => {
+      displayResultsArray[path.endCol] = participantResults[idx];
+    });
+    
+    // 빈 칸이 있으면 랜덤 결과로 채우기
+    for (let i = 0; i < count; i++) {
+      if (!displayResultsArray[i]) {
+        displayResultsArray[i] = shuffledResults[Math.floor(Math.random() * shuffledResults.length)];
+      }
+    }
+    
+    setDisplayResults(displayResultsArray);
+    
+    console.log('=== Ladder Path Debug ===');
+    console.log('EndCols:', endCols);
+    console.log('Participant results:', participantResults);
+    console.log('Display results:', displayResultsArray);
+    console.log('Final mapping:', newPaths.map((path, idx) => ({
+      participant: participants[idx].name,
+      startCol: path.startCol,
+      endCol: path.endCol,
+      result: participantResults[idx]
+    })));
+    console.log('========================');
     
     // 모든 참가자의 결과 계산
     const computedResults = newPaths.map((path, idx) => ({
       participantName: participants[idx].name,
-      resultLabel: shuffledResults[path.endCol],
+      resultLabel: participantResults[idx],
     }));
     setAllResults(computedResults);
     

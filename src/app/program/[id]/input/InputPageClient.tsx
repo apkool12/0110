@@ -210,7 +210,37 @@ export default function InputPageClient({
     router.push(`/program/${id}/settings?game=${selectedGame}`);
   };
 
-  if (!hasHydrated || !program) return null;
+  if (!hasHydrated) {
+    return (
+      <>
+        <Header />
+        <Container>
+          <NavHeader title="추첨 대상 입력" />
+          <Content>
+            <div style={{ textAlign: "center", padding: "40px 20px", color: "#ccc" }}>
+              로딩 중...
+            </div>
+          </Content>
+        </Container>
+      </>
+    );
+  }
+
+  if (!program) {
+    return (
+      <>
+        <Header />
+        <Container>
+          <NavHeader title="추첨 대상 입력" />
+          <Content>
+            <div style={{ textAlign: "center", padding: "40px 20px", color: "#ccc" }}>
+              프로그램을 찾을 수 없습니다.
+            </div>
+          </Content>
+        </Container>
+      </>
+    );
+  }
 
   return (
     <>

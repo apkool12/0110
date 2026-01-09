@@ -295,7 +295,37 @@ export default function SettingsPageClient({
     (program?.ladderResults &&
       program.ladderResults.length >= (program?.participants.length || 0));
 
-  if (!hasHydrated || !program) return null;
+  if (!hasHydrated) {
+    return (
+      <>
+        <Header />
+        <Container>
+          <NavHeader title="게임 설정" />
+          <Content>
+            <div style={{ textAlign: "center", padding: "40px 20px", color: "#ccc" }}>
+              로딩 중...
+            </div>
+          </Content>
+        </Container>
+      </>
+    );
+  }
+
+  if (!program) {
+    return (
+      <>
+        <Header />
+        <Container>
+          <NavHeader title="게임 설정" />
+          <Content>
+            <div style={{ textAlign: "center", padding: "40px 20px", color: "#ccc" }}>
+              프로그램을 찾을 수 없습니다.
+            </div>
+          </Content>
+        </Container>
+      </>
+    );
+  }
 
   return (
     <>
